@@ -1,0 +1,105 @@
+public class DNAList {
+	//enum gtype, gtype can only be DNA or RNA
+	enum gtype{
+		DNA, RNA;
+	}
+	//initialize an Array, Gene, of a Size of 50(MaxSize)
+	int MaxSize = 50;
+	LList[] array = new LList[MaxSize];
+    //constructor that literally do nothing
+	public DNAList() {}
+	//insert(pos, type, sequence) initialize an LList and insert it into the array
+	public void insert(int pos, gtype type, String sequence) {
+		//initialize an LList and store the sequence in it
+		LList Gene = new LList<>();
+		//the first element of the LList will be a char indicating whether it's RNA or DNA
+		switch(type) {
+		case DNA:
+			Gene.append('d');
+			break;
+			
+		case RNA:
+			Gene.append('r');
+			break;
+		}
+		//use a for loop to append every letter in the sequence to the LList
+		for(int i = 0; i < sequence.length() ;i++) {
+			Gene.append(sequence.charAt(i));
+		}
+		//insert this created LList into the array, and move everything backward if the position is already occupied
+		if(array[pos] != null) {
+			for(int i = sequence.length() - 1;i>pos; i--) {
+				array[i] = array[i - 1];
+			}
+		}
+		array[pos] = Gene;
+	}
+	
+	//remove(pos) remove the LList object at pos
+	public void remove(int pos) {
+		//assert that it's not null and if it is, print out a text
+//		assert array[pos] != null: "No sequence to remove at specified position";//this didn't work, sorry Andrew...
+//		array[pos] = null;
+		if(array[pos] != null) {
+			array[pos] = null;
+		}
+		else {
+			System.out.println("No sequence to remove at specified position");
+		}
+	}
+	
+	//print  print the array in following form pos, gtype ,LList
+	public void print() {
+		//iterate over the array's elements, the sequence to be printed
+		for(int i = 0; i < array.length; i ++) {
+			//eliminate the case that the array[i] = null
+			if(array[i]!=null) {
+			    System.out.print(i+"    ");
+			    array[i].moveToStart();
+			    if(array[i].getValue().equals('d')) {
+				    System.out.print("DNA"+"    ");
+			    }
+			    else if(array[i].getValue().equals('r')) {
+				    System.out.print("RNA"+"    ");
+			    }
+			    array[i].next();
+			    String tempstr = "";
+			    do {
+				    tempstr = tempstr + array[i].getValue();
+				    array[i].next();
+			    }while(array[i].getValue() != null);
+			    System.out.print(tempstr);
+			    System.out.println();
+			}
+		}
+		
+		
+	}
+	//print(pos)
+	
+	//clip(pos start end)
+	
+	//copy(pos1, pos2) copy from pos1 to pos2
+	
+	//transcribe(pos1)
+	
+	
+	
+	//main method that we are going to operate in
+    public static void main(String[] args) {
+    	//codes just for checking
+    	DNAList GInfo = new DNAList();
+    	gtype t1 = gtype.DNA;
+    	gtype t2 = gtype.RNA;
+    	GInfo.insert(1, t1, "ACGT");
+    	GInfo.insert(1, t2, "ACUU");
+    	GInfo.insert(1, t2, "UUUU");
+    	//!!!!!!!!!!!
+    	//!!!!!!!!!!!
+    	//The handout just said replace!!!!!
+    	//+more cases in the handout that we should consider but I'm really tired, I'll either deal with it Thursday or I'll just leave it to the lab 
+    	//very important: we need to ask ta whether the new sequence just replace the old sequence or do it move everything backwark!!!!
+    	GInfo.remove(0);
+    	GInfo.print();
+    }
+}
