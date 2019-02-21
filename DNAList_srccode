@@ -79,6 +79,8 @@ public class DNAList {
 		    	}
 		    }
 		}
+		
+		
 		    
 		    
 		    //insert this created LList into the array, and move everything backward if the position is already occupied
@@ -133,11 +135,78 @@ public class DNAList {
 			}
 		}
 	}
+	
 	//print(pos) print the sequence in pos position in the array in this format: [type] \t [array]
+	public void print(int pos) {
+		if(array[pos]==null) {
+			System.out.println("No sequence to print at specified position");
+		}
+		else {
+		    array[pos].moveToStart();
+		    if(array[pos].getValue().equals('d')) {
+			    System.out.print("DNA"+"\t");
+		    }
+		    else if(array[pos].getValue().equals('r')) {
+			    System.out.print("RNA"+"\t");
+		    }
+		    array[pos].next();
+		    String tempstr = "";
+		    do {
+			    tempstr = tempstr + array[pos].getValue();
+			    array[pos].next();
+		    }while(array[pos].getValue() != null);
+		    System.out.print(tempstr);
+		    System.out.println();
+		    }
+			
+		}
+	
 	
 	//clip(pos start end)
+	//the type char: start +1. end +1
+	public void clip(int pos, int start, int end) {
+		//checker #1
+		if(start<0) {
+			System.out.println("Start index is out of bound");
+			return;
+		}
+		else if(array[pos] == null) {
+			System.out.println("No sequence to clip at specified position");
+			return;
+		}
+		
+		array[pos].moveToStart();
+		
+		//End out of bound checker
+        //iterate through everything
+		int listsize = 0;
+		while(array[pos].getValue() != null) {
+			listsize ++;
+			array[pos].next();
+		}
+		
+		listsize = listsize - 2;
+		array[pos].moveToStart();
+		
+		if(end>listsize) {
+			System.out.println("End Index is out of bounds");
+			return;
+		}
+		
+		
+		
+		array[pos].next();
+		for(int i = 1; i<start+1; i++) {
+			array[pos].remove();
+			
+		}
+		array[pos].moveToPos(end+1);
+		//still need a end remover!
+	}
 	
 	//copy(pos1, pos2) copy from pos1 to pos2
+	
+	
 	
 	//transcribe(pos1)
 	
@@ -152,6 +221,15 @@ public class DNAList {
     	GInfo.insert(1, t1, null);
     	GInfo.insert(2, t2, "ACTG");
     	GInfo.insert(3, t2, "UUUU");
+    	
+    	GInfo.remove(2);
+    	GInfo.remove(10);
+    	GInfo.remove(1);
+    	
     	GInfo.print();
+    	GInfo.print(10);
+    	GInfo.print(2);
+    	GInfo.print(3);
+    	GInfo.print(1);
     }
 }
