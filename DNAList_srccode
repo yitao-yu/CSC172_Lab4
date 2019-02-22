@@ -245,16 +245,16 @@ public class DNAList {
 			
 		    for(int i = 0; i < size; i++) {
 		    	
-		    	System.out.println("y");
+		    	//System.out.println("y");
 				if(array[pos1].getValue().equals('T')) {
 					
 					array[pos1].remove();
 					//array[pos1].prev();
 					array[pos1].insert('U');
-					System.out.println("x");
+					//System.out.println("x");
 				}
 				array[pos1].next();
-				System.out.println("z");
+				//System.out.println("z");
 			
 		    }
 		}
