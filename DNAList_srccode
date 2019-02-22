@@ -175,40 +175,89 @@ public class DNAList {
 			return;
 		}
 		
-		array[pos].moveToStart();
-		
 		//End out of bound checker
         //iterate through everything
-		int listsize = 0;
-		while(array[pos].getValue() != null) {
-			listsize ++;
-			array[pos].next();
-		}
-		
+		int listsize;
+		listsize = array[pos].length();
 		listsize = listsize - 2;
-		array[pos].moveToStart();
 		
-		if(end>listsize) {
+		if(end > listsize) {
 			System.out.println("End Index is out of bounds");
 			return;
 		}
 		
+		//End Remover
+		//We put end remover before the start remover so that start remover wouldn't affect end remover for altering the LList
+		array[pos].moveToPos(end+2);
+		System.out.println(array[pos].getValue());
+		while(array[pos].getValue() != null) {
+			array[pos].remove();
+			//array[pos].next();	
+		}
+		//array[pos].next();
+		//array[pos].remove();
 		
-		
+		//start remover
+		array[pos].moveToStart();
 		array[pos].next();
 		for(int i = 1; i<start+1; i++) {
 			array[pos].remove();
-			
+			//array[pos].next();
 		}
-		array[pos].moveToPos(end+1);
-		//still need a end remover!
 	}
 	
 	//copy(pos1, pos2) copy from pos1 to pos2
-	
+		public void copy (int pos1, int pos2) {
+			if(array[pos1]==null) {
+				System.out.println("No specified sequence to copy at specified position");
+			}
+			
+			else {
+				array[pos2] = array[pos1];
+			}
+		}
 	
 	
 	//transcribe(pos1)
+		public void transcribe(int pos1) {
+			
+		
+			
+			if(array[pos1]==null) {
+				System.out.println("No sequence to transcribe at specified position");
+				return;
+			}
+			if(array[pos1].getValue().equals('r')) {
+				System.out.println("Cannot transcribe RNA");
+				return;
+			}
+			
+			array[pos1].moveToStart();
+			
+			array[pos1].remove();
+			//array[pos1].prev();
+			array[pos1].insert('r');
+			
+			int size =array[pos1].length();
+			//System.out.println(size);
+			
+			array[pos1].moveToStart();
+			
+		    for(int i = 0; i < size; i++) {
+		    	
+		    	System.out.println("y");
+				if(array[pos1].getValue().equals('T')) {
+					
+					array[pos1].remove();
+					//array[pos1].prev();
+					array[pos1].insert('U');
+					System.out.println("x");
+				}
+				array[pos1].next();
+				System.out.println("z");
+			
+		    }
+		}
 	
 	
 	
@@ -218,18 +267,22 @@ public class DNAList {
     	DNAList GInfo = new DNAList();
     	gtype t1 = gtype.DNA;
     	gtype t2 = gtype.RNA;
-    	GInfo.insert(1, t1, null);
-    	GInfo.insert(2, t2, "ACTG");
-    	GInfo.insert(3, t2, "UUUU");
+    	GInfo.insert(1, t1, "TTTTTTTT");
+    	//GInfo.insert(2, t2, "ACTG");
+    	GInfo.insert(3, t2, "ACUGGUCA");
     	
-    	GInfo.remove(2);
-    	GInfo.remove(10);
-    	GInfo.remove(1);
+    	//GInfo.remove(2);
+    	//GInfo.remove(10);
+    	//GInfo.remove(1);
     	
+    	//GInfo.clip(3, 0, 4);
+    	GInfo.transcribe(1);
+    	GInfo.transcribe(3);
+    	//GInfo.transcribe(1);
+    	GInfo.transcribe(0);
+    	
+    	
+
     	GInfo.print();
-    	GInfo.print(10);
-    	GInfo.print(2);
-    	GInfo.print(3);
-    	GInfo.print(1);
     }
 }
