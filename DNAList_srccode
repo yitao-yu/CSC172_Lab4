@@ -265,8 +265,8 @@ public class DNAList {
 	
 	//main method that we are going to operate in
     public static void main(String[] args) {
-//    	int size = Integer.parseInt(args[0]);
-    	int size = 50;
+    	int size = Integer.parseInt(args[0]);
+    	//int size = 50;
     	DNAList GInfo = new DNAList(size);
      	gtype DNA = gtype.DNA;
     	gtype RNA = gtype.RNA;
@@ -276,12 +276,12 @@ public class DNAList {
 
 		try {
 
-		Scanner scanner2 = new Scanner(System.in);
+		//Scanner scanner2 = new Scanner(System.in);
 
 		File f;
 
-		f = new File(scanner2.nextLine());
-//		f = new File(args[1]);
+		//f = new File(scanner2.nextLine());
+		f = new File(args[1]);
 
 		Scanner scanner = new Scanner (f);
 
