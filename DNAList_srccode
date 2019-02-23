@@ -1,14 +1,16 @@
-
+import java.util.Scanner;
+import java.io.*;
 public class DNAList {
 	//enum gtype, gtype can only be DNA or RNA
 	enum gtype{
 		DNA, RNA;
 	}
 	//initialize an Array, Gene, of a Size of 50(MaxSize)
-	int MaxSize = 50;
-	LList[] array = new LList[MaxSize];
+	LList[] array;
     //constructor that literally do nothing
-	public DNAList() {}
+	public DNAList(int size) {
+		array = new LList[size];
+	}
 	
 	//insert(pos, type, sequence) initialize an LList and insert it into the array
 	public void insert(int pos, gtype type, String sequence) {
@@ -263,26 +265,102 @@ public class DNAList {
 	
 	//main method that we are going to operate in
     public static void main(String[] args) {
-    	//codes just for checking
-    	DNAList GInfo = new DNAList();
-    	gtype t1 = gtype.DNA;
-    	gtype t2 = gtype.RNA;
-    	GInfo.insert(1, t1, "TTTTTTTT");
-    	//GInfo.insert(2, t2, "ACTG");
-    	GInfo.insert(3, t2, "ACUGGUCA");
-    	
-    	//GInfo.remove(2);
-    	//GInfo.remove(10);
-    	//GInfo.remove(1);
-    	
-    	//GInfo.clip(3, 0, 4);
-    	GInfo.transcribe(1);
-    	GInfo.transcribe(3);
-    	//GInfo.transcribe(1);
-    	GInfo.transcribe(0);
+//    	int size = Integer.parseInt(args[0]);
+    	int size = 50;
+    	DNAList GInfo = new DNAList(size);
+     	gtype DNA = gtype.DNA;
+    	gtype RNA = gtype.RNA;
     	
     	
+    	System.out.println("Enter filename to print its contents");
 
-    	GInfo.print();
+		try {
+
+		Scanner scanner2 = new Scanner(System.in);
+
+		File f;
+
+		f = new File(scanner2.nextLine());
+//		f = new File(args[1]);
+
+		Scanner scanner = new Scanner (f);
+
+		
+		String[]ar = new String[4];
+		int i=0;
+		while(scanner.hasNextLine()) {
+			//int i=0;
+			//we have to reset the ar[1], which is normally where we store the position index every single loop
+			//in case that the command line was "print" while ar[1] has been passed value to when executing last command line, say "insert 1 RNA AUCG"
+			//in the case we afraid of, if we don't reset it, the programe will read that command line as "print 1" 
+			//and unintentionally called the print(pos) method instead of print() method
+			ar[1] = null;
+			
+	        while (scanner.hasNext()) {
+	            String s = scanner.next();
+	            ar[i] = s;
+	            i++;
+		    }
+	        i=0;
+	        switch(ar[0]) {
+	        case "insert":
+	        	//read ar[1]
+	        	int pos = Integer.parseInt(ar[1]);
+	        	//read ar[2]
+	        	switch(ar[2]) {
+	        	case "DNA":
+	        		GInfo.insert(pos, DNA, ar[3]);
+	        		break;
+	        	
+	        	case "RNA":
+	        		GInfo.insert(pos, RNA, ar[3]);
+	        		break;
+	        	}
+	        	break;
+	        
+	        case "remove":
+	        	pos = Integer.parseInt(ar[1]);
+	        	GInfo.remove(pos);
+	        	break;
+	        	
+	        case "print":
+	        	if(ar[1] == null) {
+	        		GInfo.print();
+	        	}
+	        	else {
+	        	    pos = Integer.parseInt(ar[1]);
+	        	    GInfo.print(pos);
+	        	}
+	        	break;
+	        
+	        case "clip":
+	        	pos = Integer.parseInt(ar[1]);
+	        	int start = Integer.parseInt(ar[2]);
+	        	int end = Integer.parseInt(ar[3]);
+	        	GInfo.clip(pos, start, end);
+	        	break;
+	        
+	        case "copy":
+	        	int pos1 = Integer.parseInt(ar[1]);
+	        	int pos2 = Integer.parseInt(ar[2]);
+	        	GInfo.copy(pos1, pos2);
+	        	break;
+	        	
+	        case "transcribe":
+	        	pos = Integer.parseInt(ar[1]);
+	        	GInfo.transcribe(pos);
+	        	break;
+	        	
+	        default:
+	        	System.out.println("Unprocessed Command Line");
+	        }
+		}
+		}
+
+		catch(FileNotFoundException e){
+
+			System.out.println("File does not exist");
+    	
     }
+} 
 }
