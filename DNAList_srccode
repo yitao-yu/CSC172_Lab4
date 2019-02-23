@@ -294,14 +294,14 @@ public class DNAList {
 
 		try {
 
-		Scanner scanner2 = new Scanner(System.in);
+		//Scanner scanner2 = new Scanner(System.in);
 
 		File f;
 
 		//f = new File(scanner2.nextLine());
 		f = new File(args[1]);
 
-		//Scanner scanner = new Scanner (f);
+		Scanner scanner = new Scanner (f);
 
 		
 	
