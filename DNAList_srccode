@@ -271,7 +271,6 @@ public class DNAList {
      	gtype DNA = gtype.DNA;
     	gtype RNA = gtype.RNA;
     	
-    	
     	System.out.println("Enter filename to print its contents");
 
 		try {
@@ -286,22 +285,14 @@ public class DNAList {
 		Scanner scanner = new Scanner (f);
 
 		
-		String[]ar = new String[4];
-		int i=0;
+	
+		
 		while(scanner.hasNextLine()) {
-			//int i=0;
-			//we have to reset the ar[1], which is normally where we store the position index every single loop
-			//in case that the command line was "print" while ar[1] has been passed value to when executing last command line, say "insert 1 RNA AUCG"
-			//in the case we afraid of, if we don't reset it, the programe will read that command line as "print 1" 
-			//and unintentionally called the print(pos) method instead of print() method
-			ar[1] = null;
+			String s = scanner.nextLine();
+			String[] ar = s.split(" ");
 			
-	        while (scanner.hasNext()) {
-	            String s = scanner.next();
-	            ar[i] = s;
-	            i++;
-		    }
-	        i=0;
+	        
+	       
 	        switch(ar[0]) {
 	        case "insert":
 	        	//read ar[1]
@@ -324,7 +315,7 @@ public class DNAList {
 	        	break;
 	        	
 	        case "print":
-	        	if(ar[1] == null) {
+	        	if(ar.length==1) {
 	        		GInfo.print();
 	        	}
 	        	else {
