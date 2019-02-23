@@ -133,7 +133,8 @@ public class DNAList {
 				    array[i].next();
 			    }while(array[i].getValue() != null);
 			    System.out.print(tempstr);
-			    System.out.println();
+			    tempstr = "";
+			    System.out.println("");
 			}
 		}
 	}
@@ -158,9 +159,9 @@ public class DNAList {
 			    array[pos].next();
 		    }while(array[pos].getValue() != null);
 		    System.out.print(tempstr);
-		    System.out.println();
+		    tempstr = "";
+		    System.out.println("");
 		    }
-			
 		}
 	
 	
@@ -191,7 +192,7 @@ public class DNAList {
 		//End Remover
 		//We put end remover before the start remover so that start remover wouldn't affect end remover for altering the LList
 		array[pos].moveToPos(end+2);
-		System.out.println(array[pos].getValue());
+		//System.out.println(array[pos].getValue());
 		while(array[pos].getValue() != null) {
 			array[pos].remove();
 			//array[pos].next();	
@@ -228,6 +229,8 @@ public class DNAList {
 			if(array[pos1]==null) {
 				System.out.println("No sequence to transcribe at specified position");
 				return;
+			}else {
+				array[pos1].moveToStart();
 			}
 			if(array[pos1].getValue().equals('r')) {
 				System.out.println("Cannot transcribe RNA");
@@ -265,8 +268,8 @@ public class DNAList {
 	
 	//main method that we are going to operate in
     public static void main(String[] args) {
-    	int size = Integer.parseInt(args[0]);
-    	//int size = 50;
+//    	int size = Integer.parseInt(args[0]);
+    	int size = 50;
     	DNAList GInfo = new DNAList(size);
      	gtype DNA = gtype.DNA;
     	gtype RNA = gtype.RNA;
@@ -275,12 +278,12 @@ public class DNAList {
 
 		try {
 
-		//Scanner scanner2 = new Scanner(System.in);
+		Scanner scanner2 = new Scanner(System.in);
 
 		File f;
 
-		//f = new File(scanner2.nextLine());
-		f = new File(args[1]);
+		f = new File(scanner2.nextLine());
+//		f = new File(args[1]);
 
 		Scanner scanner = new Scanner (f);
 
@@ -349,9 +352,7 @@ public class DNAList {
 		}
 
 		catch(FileNotFoundException e){
-
 			System.out.println("File does not exist");
-    	
     }
 } 
 }
