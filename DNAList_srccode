@@ -223,9 +223,6 @@ public class DNAList {
 	
 	//transcribe(pos1)
 		public void transcribe(int pos1) {
-			
-		
-			
 			if(array[pos1]==null) {
 				System.out.println("No sequence to transcribe at specified position");
 				return;
@@ -239,29 +236,48 @@ public class DNAList {
 			
 			array[pos1].moveToStart();
 			
-			array[pos1].remove();
-			//array[pos1].prev();
-			array[pos1].insert('r');
-			
 			int size =array[pos1].length();
 			//System.out.println(size);
 			
 			array[pos1].moveToStart();
 			
 		    for(int i = 0; i < size; i++) {
-		    	
-		    	//System.out.println("y");
 				if(array[pos1].getValue().equals('T')) {
-					
 					array[pos1].remove();
-					//array[pos1].prev();
 					array[pos1].insert('U');
-					//System.out.println("x");
 				}
 				array[pos1].next();
-				//System.out.println("z");
-			
 		    }
+			array[pos1].moveToStart();
+		    for(int i = 0; i < size; i++) {
+		    	if(array[pos1].getValue().equals('A')) {
+					array[pos1].remove();
+					array[pos1].insert('U');
+		    	}
+		    	else if(array[pos1].getValue().equals('U')) {
+					array[pos1].remove();
+					array[pos1].insert('A');
+		    	}
+		    	else if(array[pos1].getValue().equals('C')) {
+					array[pos1].remove();
+					array[pos1].insert('G');
+		    	}
+		    	else if(array[pos1].getValue().equals('G')){
+					array[pos1].remove();
+					array[pos1].insert('C');
+		    	}
+		    	array[pos1].next();
+		    }
+			LList Trans = new LList<>();
+			Trans.append('r');
+			Trans.moveToEnd();
+		    for(int i = size; i>0; i --) {
+		    	if(array[pos1].getValue()!=null) {
+				Trans.append(array[pos1].getValue());
+		    	}
+		    	array[pos1].prev();
+		    }
+		    array[pos1] = Trans;
 		}
 	
 	
