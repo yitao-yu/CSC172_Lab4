@@ -121,17 +121,17 @@ public class DNAList {
 			    System.out.print(i+"\t");
 			    array[i].moveToStart();
 			    if(array[i].getValue().equals('d')) {
-				    System.out.print("DNA"+"\t");
+				    System.out.print("DNA");
 			    }
 			    else if(array[i].getValue().equals('r')) {
-				    System.out.print("RNA"+"\t");
+				    System.out.print("RNA");
 			    }
 			    array[i].next();
-			    String tempstr = "";
-			    do {
+			    String tempstr = "\t";
+			    while(array[i].getValue() != null) {
 				    tempstr = tempstr + array[i].getValue();
 				    array[i].next();
-			    }while(array[i].getValue() != null);
+			    }
 			    System.out.print(tempstr);
 			    tempstr = "";
 			    System.out.println("");
@@ -147,17 +147,17 @@ public class DNAList {
 		else {
 		    array[pos].moveToStart();
 		    if(array[pos].getValue().equals('d')) {
-			    System.out.print("DNA"+"\t");
+			    System.out.print("DNA");
 		    }
 		    else if(array[pos].getValue().equals('r')) {
-			    System.out.print("RNA"+"\t");
+			    System.out.print("RNA");
 		    }
 		    array[pos].next();
-		    String tempstr = "";
-		    do {
+		    String tempstr = "\t";
+		    while(array[pos].getValue() != null){
 			    tempstr = tempstr + array[pos].getValue();
 			    array[pos].next();
-		    }while(array[pos].getValue() != null);
+		    }
 		    System.out.print(tempstr);
 		    tempstr = "";
 		    System.out.println("");
@@ -290,11 +290,11 @@ public class DNAList {
      	gtype DNA = gtype.DNA;
     	gtype RNA = gtype.RNA;
     	
-    	System.out.println("Enter filename to print its contents");
+    	//System.out.println("Enter filename to print its contents");
 
 		try {
 
-		//Scanner scanner2 = new Scanner(System.in);
+		Scanner scanner2 = new Scanner(System.in);
 
 		File f;
 
@@ -302,16 +302,11 @@ public class DNAList {
 		f = new File(args[1]);
 
 		Scanner scanner = new Scanner (f);
-
-		
-	
 		
 		while(scanner.hasNextLine()) {
 			String s = scanner.nextLine();
 			String[] ar = s.split(" ");
 			
-	        
-	       
 	        switch(ar[0]) {
 	        case "insert":
 	        	//read ar[1]
