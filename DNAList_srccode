@@ -1,369 +1,454 @@
 import java.util.Scanner;
-import java.io.*;
-public class DNAList {
-	//enum gtype, gtype can only be DNA or RNA
-	enum gtype{
-		DNA, RNA;
-	}
-	//initialize an Array, Gene, of a Size of 50(MaxSize)
-	LList[] array;
-    //constructor that literally do nothing
-	public DNAList(int size) {
-		array = new LList[size];
+
+/*
+ * params
+ * 
+ * Constructor
+ * addable for array[][]
+ * addable for line[]
+ * print
+ * checker
+ * move : to be completed
+ * Gameover
+ * gravity
+ * mergeline
+ * restart: not completely accurately implemented
+ * quit: to be implemented
+ * numgenerator
+ * 
+ */
+public class NumGame {
+    int[][] array = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    //int[][] array = {{4,0,0,0},{8,0,0,0},{4,0,0,0},{4,0,2,0}};//code for testing convenience
+	int freespace = 16;
+	int step = 0;
+	boolean quitted = false;
+	
+	
+	//constructor
+	public NumGame() {
+		//freespace = 0;//code for testing convenience, don't delete
+		this.numgenerator();
+		this.numgenerator();
+		this.print();
+		System.out.println("Show me your next move");
 	}
 	
-	//insert(pos, type, sequence) initialize an LList and insert it into the array
-	public void insert(int pos, gtype type, String sequence) {
-		//initialize an LList and store the sequence in it
-		LList Gene = new LList<>();
-		//the first element of the LList will be a char indicating whether it's RNA or DNA
-		switch(type) {
-		case DNA:
-			Gene.append('d');
+	//collide detecter
+	private boolean addable(int i , int j ,String dir) {
+		switch(dir) {
+		
+		case"w"://up
+			try {
+			if(array[i][j] == array[i + 1][j]&&array[i][j]!=0) {
+				return true;
+			}
+			}
+			catch(ArrayIndexOutOfBoundsException e) {
+				break;
+			}
+			
+			break;
+		
+		case"a"://left
+			try {
+			if((array[i][j] == array[i][j + 1])&&array[i][j]!=0) {
+				return true;
+			}
+			}
+			catch(ArrayIndexOutOfBoundsException e) {
+				break;
+			}
 			break;
 			
-		case RNA:
-			Gene.append('r');
+		case "s"://down
+			try {
+			if(array[i][j] == array[i - 1][j]&&array[i][j]!=0) {
+				return true;
+			}
+			}
+			catch(ArrayIndexOutOfBoundsException e) {
+				break;
+			}
+			break;
+		
+	    case"d"://right
+		try {
+		if(array[i][j] == array[i][j - 1]&&array[i][j]!=0) {
+			return true;
+		}
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
 			break;
 		}
-		
-		boolean insert = true;
-		if(sequence != null) {//something I don't understand occured here
-		    //use a for loop to append every letter in the sequence to the LList
-			//and checking
+		break;
+		}
+		return false;
+	}
+	
+	private boolean addable(int[] line, int i , String dir) {
+		if(dir.equals("w")||dir.equals("a")) {//condition: up or left, which are both "reverse"
+			if(line[i] == line[i + 1] && line[i] != 0) {
+				return true;
+			}
+		}
+		else if(dir.equals("s")||dir.equals("d")) {//condition: down or right, which are both "downstream"
+			if(line[i] == line[i - 1] && line[i] != 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	//print: we should print the array after we move, restart, or start a new game
+	public void print() {
+		for(int i =0; i<4;i++) {
+			for(int j=0;j<4;j++) {
+				    System.out.printf("%4d",array[i][j]);
+			}
+			System.out.println();
+		}
+		System.out.println();
+		System.out.println("You have moved "+step+" steps");
+	}
+	
+	//checker: checks if the method movement is possible in the specified direction
+	public boolean checker(String dir) {
+		boolean zerocase = false;//a boolean used to check when there is a 0 if any non-zero element can be moved towards it
+		switch(dir) {
+		case"w"://up
+			for(int i = 0; i<3;i++) {
+				for(int j=0;j<4;j++) {
+					if(array[i][j] == 0) {
+						for(int k = i + 1; k < 4; k++) {
+							if(array[k][j] != 0) {
+								zerocase = true;
+								break;
+							}
+						}
+					}
+					if(this.addable(i, j, dir)||zerocase) {
+						zerocase = false;
+						return true;
+					}
+				}
+			}
+			break;
 			
-		    for(int i = 0; i < sequence.length() ;i++) {
-		    	boolean Errortemp = false;
-		    	
-				switch(type) {
-				case DNA:
-					switch(sequence.charAt(i)) {
-					case 'A':
-						break;
-					case 'T':
-						break;
-					case 'C':
-						break;
-					case 'G':
-						break;
-					default:
-						Errortemp = true;
-						break;
+		case"a"://left
+			for(int i =0; i<4;i++) {
+				for(int j = 0 ;j<3; j++) {
+					if(array[i][j] == 0) {
+						for(int k = j + 1; k < 4; k++) {
+							if(array[i][k] != 0) {
+								zerocase = true;
+								break;
+							}
+						}
 					}
-					break;
-					
-				case RNA:
-					switch(sequence.charAt(i)) {
-					case 'A':
-						break;
-					case 'U':
-						break;
-					case 'C':
-						break;
-					case 'G':
-						break;
-					default:
-						Errortemp = true;
-						break;
+					if(this.addable(i, j, dir)||zerocase) {
+					    zerocase = false;
+						return true;
 					}
-					break;
-					
+				}
+			}
+			break;
+			
+		case"s"://down
+			for(int i = 3; i>0;i--) {
+				for(int j=0;j<4;j++) {
+					if(array[i][j] == 0) {
+						for(int k = i - 1; k > -1; k--) {
+							if(array[k][j] != 0) {
+								zerocase = true;
+								break;
+							}
+						}
+					}
+					if(this.addable(i, j, dir)||zerocase) {
+						zerocase = false;
+						return true;
+					}
+				}
+			}
+			break;
+		
+		case "d"://right
+			for(int i = 0; i<4;i++) {
+				for(int j=3;j > 0; j--) {
+					if(array[i][j] == 0) {
+						for(int k = j - 1; k > -1; k--) {
+							if(array[i][k] != 0) {
+								zerocase = true;
+								break;
+							}
+						}
+					}
+					if(this.addable(i, j, dir)||zerocase) {
+					    zerocase = false;
+						return true;
+					}				
+				}
+			}
+			break;
+		}
+		return false;
+	}
+	
+	//move: this is going to be the nasty part
+	//be mindful that we are actually testing it backward
+			//so if there's a row{0,2,2,2}
+			//we are doing like, the fourth element is addable to third element, and we added them, and we also move it
+			//now we move to the third(and we also don't check if now the fourth is addable to third, because for{2,2,2,2} you are going to get {0,0,4,4})
+	public void move(String dir) {
+		//1st: checker
+		if(checker(dir)!=true ) {
+			System.out.println("That wasn't a valid move");
+			return;
+		}
+		int[] line = new int[4];
+		if(dir.equals("w")||dir.equals("s")) {//cases that we process the column
+			for(int j = 0; j < 4; j++) {
+				for(int i = 0; i < 4; i ++) {
+					line[i] = array[i][j];
+				}
+				this.gravity(line, dir);
+				this.mergeline(line, dir);
+				this.gravity(line, dir);
+				for(int i = 0; i < 4; i ++) {
+					array[i][j] = line[i];
+				}
+			}
+		}
+		if(dir.equals("a")||dir.equals("d")) {//cases that we process the row
+			for(int i = 0; i < 4; i++) {
+				for(int j = 0; j < 4; j ++) {
+					line[j] = array[i][j];
+				}
+				this.gravity(line, dir);
+				this.mergeline(line, dir);
+				this.gravity(line, dir);
+				for(int j = 0; j < 4; j ++) {
+					array[i][j] = line[j];
+				}
+			}
+		}
+		step ++;
+		this.numgenerator();
+		print();
+		if(!GameOver()) {
+		    System.out.println("Show me your next move");
+		}
+		else {
+			System.out.println(" press 'r' to restart, press 'q' to quit.");
+		}
+	}
+	
+	public boolean GameOver() {
+		//if win: 2048 print: "You have acheived 2048. Good Game!"
+		for(int i = 0; i < 4; i ++) {
+			for(int j = 0; j < 4; j ++) {
+				if(array[i][j] == 2048) {
+					System.out.println("You have acheived 2048. Good Game!");
+					return true;
+				}
+			}
+		}
+		//if lose print: "You have lost. The game is over. press 'r' to restart, press 'q' to quit "
+		if(this.checker("w") || this.checker("a") || this.checker("s") || this.checker("d")) {
+		}
+		else {
+			System.out.println("You have lost. The game is over!");
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public void gravity(int[] line, String dir) {
+		if(dir.equals("w")||dir.equals("a")) {//condition: up or left, which are both "reverse"
+			for(int i = 3; i > 0; i --) {
+				if(line[i - 1] == 0) {
+					line[i - 1] = line[i];
+					line[i] = 0;
+					for(int j = i+1; j < 4; j++) {
+						if(line[j - 1] == 0) {
+							line[j - 1] = line[j];
+							line[j] = 0;
+					    }
+				    }
+			    }
+		    }
+		}
+		else if(dir.equals("s")||dir.equals("d")) {//condition: down or right, which are both "downstream"
+			for(int i = 0; i < 3; i ++) {
+				if(line[i + 1] == 0) {
+					line[i + 1] = line[i];
+					line[i] = 0;
+					for(int j = i-1; j>=0; j--) {
+						if(line[j + 1] == 0) {
+							line[j + 1] = line[j];
+							line[j] = 0;
+					    }
+				    }
+			    }
+		    }
+		}
+	}
+	
+	public void mergeline(int[] line, String dir) {
+		if(dir.equals("w")||dir.equals("a")) {//condition: up or left, which are both "reverse"
+			for(int i = 0; i < 3; i ++) {
+				if(addable(line,i,dir)) {
+					line[i + 1] = 2*line[i];
+					line[i] = 0;
+					i = i + 1;
+					freespace++;
+				}
+		    }
+		}
+		else if(dir.equals("s")||dir.equals("d")) {//condition: down or right, which are both "downstream"
+			for(int i = 3; i > 0; i --) {
+				if(addable(line,i,dir)) {
+					line[i - 1] = 2*line[i];
+					line[i] = 0;
+					i = i - 1;
+					freespace++;
+				}
+		    }
+		}
+	}
+	
+	//restart
+	//need to make user confirm before restart
+	public void restart() {
+		
+		for(int i =0; i<4;i++) {
+			for(int j=0;j<4;j++) {
+				array[i][j] = 0;
+			}
+		}
+		freespace = 16;
+		step = 0;
+		this.numgenerator();
+		this.numgenerator();
+		this.print();
+		System.out.println("Show me your next move");
+	}
+	
+	//quiter: I don't know what that is yet, prof wants it though
+	public void quit() {
+		this.quitted = true;
+		for(int i =0; i<4;i++) {
+			for(int j=0;j<4;j++) {
+				array[i][j] = 0;
+			}
+		}
+		freespace = 16;
+		step = 0;
+		System.out.println("See you next time! Goodluck in life! 2048 will always be here for you! WE LOVE YOU!!");
+	}
+	
+	//num generator
+	public void numgenerator() {
+		if(freespace > 0) {
+		//where to generate
+		int i = (int)(4*Math.random());
+		int j = (int)(4*Math.random());
+		while(array[i][j] != 0) {
+			i = (int)(4*Math.random());
+			j = (int)(4*Math.random());
+		}
+
+		//put 2 or 4 at the place
+		if(Math.random()>0.2)
+		    array[i][j] = 2;
+		else
+			array[i][j] = 4;
+		freespace--;
+		}
+	}
+	//main
+	public static void main(String[] args) {
+		System.out.println("Welcome to 2048 Game! Use a,s,d and w to move left, down,right and up respectively");
+		System.out.println("Use q to quit and r to restart");
+		
+		Scanner scanner = new Scanner(System.in);
+		NumGame G2048 = new NumGame();
+		String input;
+		while(G2048.quitted == false) {
+				loop:
+				while(G2048.GameOver() == false && G2048.quitted == false) {
+			        input = scanner.nextLine();
+				    if(input.equals("w")||input.equals("a")||input.equals("s")||input.equals("d")) {
+					    G2048.move(input);
+				    }
+				    else {
+					    switch(input) {
+					    case "q":
+					    	System.out.println("Sure to Quit? (Y/N)");
+					    	input = scanner.nextLine();
+					    	if(input.equals("y")) {
+						    G2048.quit();
+						    scanner.close();
+					    	}
+					    	else{
+					    		System.out.println("Restart or Quit");
+					    		continue loop;
+					    	}
+						    break;
+						
+					    case "r":System.out.println("Sure to Restart? (Y/N)");
+				    	input = scanner.nextLine();
+				    	if(input.equals("y")) {
+					    G2048.restart();
+					    System.out.println("Show me Your move");
+				    	}
+				    	else{
+				    		System.out.println("Restart ot Quit?");
+				    	}
+					    	continue loop;
+						
+					    default:
+						    break;
+					    }
+				    }
 				}
 				
-				//appending or printing
-		    	if(Errortemp == false) {
-			        Gene.append(sequence.charAt(i));
-		    	}
-		    	else {
-		    		System.out.println("Error occured when Inserting");
-		    		insert = false;
-		    		break;
-		    	}
-		    }
-		}
-		
-		
-		    
-		    
-		    //insert this created LList into the array, and move everything backward if the position is already occupied
-		    //2/21/2019: now it just insert the LList
-		    
-		    //if(array[pos] != null) {
-			    //for(int i = sequence.length() - 1;i>pos; i--) {
-				    //array[i] = array[i - 1];
-			    //}
-		    //}
-		if(insert) {
-		    array[pos] = Gene;
-		}
+				//something should be done here
+				if(G2048.GameOver()==true) {
+					 input = scanner.nextLine();
+					
+					switch(input) {
+					case "q" :
+						System.out.println("Are you sure you want to quit? y =Yes/ n = No");
+						input = scanner.nextLine();
+						if(input.equals("y")) {
+							G2048.quit();
+							scanner.close();
+						}
+						else {
+						}
+						
+						
+						break;
+					case "r" :
+						System.out.println("Are you sure you want to restart this game?  y =Yes/ n = No");
+						input = scanner.nextLine();
+						if(input.equals("y")) {
+							G2048.restart();
+							System.out.println("Show me your move");
+						}
+						else {
+						
+						}
+						break;	
 
-	}
-	
-	//remove(pos) remove the LList object at pos
-	public void remove(int pos) {
-		//assert that it's not null and if it is, print out a text
-//		assert array[pos] != null: "No sequence to remove at specified position";//this didn't work, sorry Andrew...
-//		array[pos] = null;
-		if(array[pos] != null) {
-			array[pos] = null;
-		}
-		else {
-			System.out.println("No sequence to remove at specified position");
-		}
-	}
-	
-	//print  print the array in following form pos, gtype ,LList
-	public void print() {
-		//iterate over the array's elements, the sequence to be printed
-		for(int i = 0; i < array.length; i ++) {
-			//eliminate the case that the array[i] = null
-			if(array[i]!=null) {
-			    System.out.print(i+"\t");
-			    array[i].moveToStart();
-			    if(array[i].getValue().equals('d')) {
-				    System.out.print("DNA");
-			    }
-			    else if(array[i].getValue().equals('r')) {
-				    System.out.print("RNA");
-			    }
-			    array[i].next();
-			    String tempstr = "\t";
-			    while(array[i].getValue() != null) {
-				    tempstr = tempstr + array[i].getValue();
-				    array[i].next();
-			    }
-			    System.out.print(tempstr);
-			    tempstr = "";
-			    System.out.println("");
-			}
-		}
-	}
-	
-	//print(pos) print the sequence in pos position in the array in this format: [type] \t [array]
-	public void print(int pos) {
-		if(array[pos]==null) {
-			System.out.println("No sequence to print at specified position");
-		}
-		else {
-		    array[pos].moveToStart();
-		    if(array[pos].getValue().equals('d')) {
-			    System.out.print("DNA");
-		    }
-		    else if(array[pos].getValue().equals('r')) {
-			    System.out.print("RNA");
-		    }
-		    array[pos].next();
-		    String tempstr = "\t";
-		    while(array[pos].getValue() != null){
-			    tempstr = tempstr + array[pos].getValue();
-			    array[pos].next();
-		    }
-		    System.out.print(tempstr);
-		    tempstr = "";
-		    System.out.println("");
-		    }
-		}
-	
-	
-	//clip(pos start end)
-	//the type char: start +1. end +1
-	public void clip(int pos, int start, int end) {
-		//checker #1
-		if(start<0) {
-			System.out.println("Start index is out of bound");
-			return;
-		}
-		else if(array[pos] == null) {
-			System.out.println("No sequence to clip at specified position");
-			return;
-		}
-		
-		//End out of bound checker
-        //iterate through everything
-		int listsize;
-		listsize = array[pos].length();
-		listsize = listsize - 2;
-		
-		if(end > listsize) {
-			System.out.println("End Index is out of bounds");
-			return;
-		}
-		
-		//End Remover
-		//We put end remover before the start remover so that start remover wouldn't affect end remover for altering the LList
-		array[pos].moveToPos(end+2);
-		//System.out.println(array[pos].getValue());
-		while(array[pos].getValue() != null) {
-			array[pos].remove();
-			//array[pos].next();	
-		}
-		//array[pos].next();
-		//array[pos].remove();
-		
-		//start remover
-		array[pos].moveToStart();
-		array[pos].next();
-		for(int i = 1; i<start+1; i++) {
-			array[pos].remove();
-			//array[pos].next();
-		}
-	}
-	
-	//copy(pos1, pos2) copy from pos1 to pos2
-		public void copy (int pos1, int pos2) {
-			if(array[pos1]==null) {
-				System.out.println("No specified sequence to copy at specified position");
-			}
-			
-			else {
-				array[pos2] = array[pos1];
-			}
-		}
-	
-	
-	//transcribe(pos1)
-		public void transcribe(int pos1) {
-			if(array[pos1]==null) {
-				System.out.println("No sequence to transcribe at specified position");
-				return;
-			}else {
-				array[pos1].moveToStart();
-			}
-			if(array[pos1].getValue().equals('r')) {
-				System.out.println("Cannot transcribe RNA");
-				return;
-			}
-			
-			array[pos1].moveToStart();
-			
-			int size =array[pos1].length();
-			//System.out.println(size);
-			
-			array[pos1].moveToStart();
-			
-		    for(int i = 0; i < size; i++) {
-				if(array[pos1].getValue().equals('T')) {
-					array[pos1].remove();
-					array[pos1].insert('U');
+					}
 				}
-				array[pos1].next();
-		    }
-			array[pos1].moveToStart();
-		    for(int i = 0; i < size; i++) {
-		    	if(array[pos1].getValue().equals('A')) {
-					array[pos1].remove();
-					array[pos1].insert('U');
-		    	}
-		    	else if(array[pos1].getValue().equals('U')) {
-					array[pos1].remove();
-					array[pos1].insert('A');
-		    	}
-		    	else if(array[pos1].getValue().equals('C')) {
-					array[pos1].remove();
-					array[pos1].insert('G');
-		    	}
-		    	else if(array[pos1].getValue().equals('G')){
-					array[pos1].remove();
-					array[pos1].insert('C');
-		    	}
-		    	array[pos1].next();
-		    }
-			LList Trans = new LList<>();
-			Trans.append('r');
-			Trans.moveToEnd();
-		    for(int i = size; i>0; i --) {
-		    	if(array[pos1].getValue()!=null) {
-				Trans.append(array[pos1].getValue());
-		    	}
-		    	array[pos1].prev();
-		    }
-		    array[pos1] = Trans;
+			}
 		}
-	
-	
-	
-	//main method that we are going to operate in
-    public static void main(String[] args) {
-    	int size = Integer.parseInt(args[0]);
-    	//int size = 50;
-    	DNAList GInfo = new DNAList(size);
-     	gtype DNA = gtype.DNA;
-    	gtype RNA = gtype.RNA;
-    	
-    	//System.out.println("Enter filename to print its contents");
-
-		try {
-
-		Scanner scanner2 = new Scanner(System.in);
-
-		File f;
-
-		//f = new File(scanner2.nextLine());
-		f = new File(args[1]);
-
-		Scanner scanner = new Scanner (f);
-		
-		while(scanner.hasNextLine()) {
-			String s = scanner.nextLine();
-			String[] ar = s.split(" ");
-			
-	        switch(ar[0]) {
-	        case "insert":
-	        	//read ar[1]
-	        	int pos = Integer.parseInt(ar[1]);
-	        	//read ar[2]
-	        	switch(ar[2]) {
-	        	case "DNA":
-	        		GInfo.insert(pos, DNA, ar[3]);
-	        		break;
-	        	
-	        	case "RNA":
-	        		GInfo.insert(pos, RNA, ar[3]);
-	        		break;
-	        	}
-	        	break;
-	        
-	        case "remove":
-	        	pos = Integer.parseInt(ar[1]);
-	        	GInfo.remove(pos);
-	        	break;
-	        	
-	        case "print":
-	        	if(ar.length==1) {
-	        		GInfo.print();
-	        	}
-	        	else {
-	        	    pos = Integer.parseInt(ar[1]);
-	        	    GInfo.print(pos);
-	        	}
-	        	break;
-	        
-	        case "clip":
-	        	pos = Integer.parseInt(ar[1]);
-	        	int start = Integer.parseInt(ar[2]);
-	        	int end = Integer.parseInt(ar[3]);
-	        	GInfo.clip(pos, start, end);
-	        	break;
-	        
-	        case "copy":
-	        	int pos1 = Integer.parseInt(ar[1]);
-	        	int pos2 = Integer.parseInt(ar[2]);
-	        	GInfo.copy(pos1, pos2);
-	        	break;
-	        	
-	        case "transcribe":
-	        	pos = Integer.parseInt(ar[1]);
-	        	GInfo.transcribe(pos);
-	        	break;
-	        	
-	        default:
-	        	System.out.println("Unprocessed Command Line");
-	        }
-		}
-		}
-
-		catch(FileNotFoundException e){
-			System.out.println("File does not exist");
     }
-} 
-}
+
+
+
